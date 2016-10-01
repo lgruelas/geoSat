@@ -59,7 +59,7 @@ class miGrafica(pg.GraphicsLayout):
         self.ptemp.showGrid(x=True ,y=True)
         #self.ppre.hideAxis('bottom')
     
-        self.x_list = []
+        self.x_list = [time.time()-self.a]
     def update(self, temperatura, presion, altitud):
         pent = pg.mkPen(color=0, width=2)
         penp = pg.mkPen(color=3, width=2)

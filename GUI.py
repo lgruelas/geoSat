@@ -35,6 +35,9 @@ class Ventana(QtGui.QMainWindow):
         self.resize(1366,768)
         self.move(QtGui.QApplication.desktop().screen().rect().center()- self.rect().center())
         self.tabla = dt.Datos()
+        self.campoM = dt.DatosCampo()
+        self.dh11 = dt.DatosDH11()
+        self.gps = dt.DatosGPS()
         self.setStyleSheet("background-color: white;")
         
         #####################################################################################´
@@ -64,33 +67,33 @@ class Ventana(QtGui.QMainWindow):
         #IMAGENES
         #####################################################################################´   
         self.label_banner = QtGui.QLabel(self)
-        self.label_banner.setPixmap(QtGui.QPixmap("/files/banner2.png"))
+        self.label_banner.setPixmap(QtGui.QPixmap("./files/banner2.png"))
         self.label_banner.setGeometry(703,10,653,100)
         #powered
         self.label_f = QtGui.QLabel(self)
-        self.label_f.setPixmap(QtGui.QPixmap("/files/f.png"))
+        self.label_f.setPixmap(QtGui.QPixmap("./files/f.png"))
         self.label_f.setGeometry(1054,595,36,53)     
         self.label_q = QtGui.QLabel(self)
-        self.label_q.setPixmap(QtGui.QPixmap("/files/q.png"))
+        self.label_q.setPixmap(QtGui.QPixmap("./files/q.png"))
         self.label_q.setGeometry(1100,595,36,36)   
         self.label_p = QtGui.QLabel(self)
-        self.label_p.setPixmap(QtGui.QPixmap("/files/p.png"))
+        self.label_p.setPixmap(QtGui.QPixmap("./files/p.png"))
         self.label_p.setGeometry(1146,595,100,40)   
         self.label_m = QtGui.QLabel(self)
-        self.label_m.setPixmap(QtGui.QPixmap("/files/m.png"))
+        self.label_m.setPixmap(QtGui.QPixmap("./files/m.png"))
         self.label_m.setGeometry(1256,595,100,34)
         #logos escuela
         self.label_utm = QtGui.QLabel(self)
-        self.label_utm.setPixmap(QtGui.QPixmap("/files/ut.png"))
+        self.label_utm.setPixmap(QtGui.QPixmap("./files/ut.png"))
         self.label_utm.setGeometry(1214,517,142,68)
         self.label_enes = QtGui.QLabel(self)
-        self.label_enes.setPixmap(QtGui.QPixmap("/files/en.png"))
+        self.label_enes.setPixmap(QtGui.QPixmap("./files/en.png"))
         self.label_enes.setGeometry(1054,517,109,68)
         self.label_igum = QtGui.QLabel(self)
-        self.label_igum.setPixmap(QtGui.QPixmap("/files/unam.png"))
+        self.label_igum.setPixmap(QtGui.QPixmap("./files/unam.png"))
         self.label_igum.setGeometry(703,517,341,122)
         
-        pixmap = QtGui.QPixmap('/files/icono.png')
+        pixmap = QtGui.QPixmap('./files/icono.png')
         self.setWindowIcon(QtGui.QIcon(pixmap))
         self.style = self.style()
         
@@ -186,29 +189,84 @@ class Ventana(QtGui.QMainWindow):
         self.ser.open()
 
         while True:
-            self.a = self.ser.readline().split()
-
             try:
-                try:
-                    self.tabla.ingresarDatos(float(self.a[1]),float(self.a[0]),float(self.a[2]))
-                except ValueError:
+                self.b = self.ser.readline().strip().split(",")
+                if  self.b == [""]:
                     continue
-                if len(self.tabla.
-                    temperatura)>=1 and len(self.tabla.presion)>=1 and len(self.tabla.altitud)>=1:
-                    if self.tabla.temperatura[-1] > 100 and abs(self.tabla.presion[-2] - self.tabla.presion[-1]) > 200:
+                self.a = map(float,self.b)
+                if len(self.a) == 0:
+                    continue
+                if self.a[0] == 1:
+                    try:
+                        self.tabla.ingresarDatos(self.a[1],self.a[2],self.a[3])
+                    except ValueError:
                         continue
-                    self.hora_recibido = str(datetime.datetime.utcnow().time())
-                    self.tabla.guardarEnArchivo(self.hora_recibido)
-                    self.tabla.agregarTableWidget(self.table, self.hora_recibido)
-                    self.l.update(self.tabla.temperatura, self.tabla.presion, self.tabla.altitud)
-                    self.relojultima.actualizar_hora(self.hora_recibido)
-                    self.tabla.ingresarBaseDatos(self.hora_recibido)
-                    self.checarMaxMin(self.tabla.temperatura[-1], self.tabla.presion[-1], self.tabla.altitud[-1])
-                    self.datospersecond.setLenNuevosDatos(len(self.tabla.presion))
-                    QtGui.QApplication.processEvents()
-                    if self.check_salir.isChecked():
-                        break
-            except IndexError or ValueError:
+                    if len(self.tabla.
+                        temperatura)>=1 and len(self.tabla.presion)>=2 and len(self.tabla.altitud)>=1:
+                        if self.tabla.temperatura[-1] > 100 or abs(self.tabla.presion[-2] - self.tabla.presion[-1]) > 200:
+                            self.tabla.temperatura = self.tabla.temperatura[:-1]
+                            self.tabla.presion = self.tabla.presion[:-1]
+                            self.tabla.altitud = self.tabla.altitud[:-1]
+                            continue
+                        self.hora_recibido = str(datetime.datetime.utcnow().time())
+                        self.tabla.guardarEnArchivo(self.hora_recibido)
+                        self.tabla.agregarTableWidget(self.table, self.hora_recibido)
+                        self.l.update(self.tabla.temperatura, self.tabla.presion, self.tabla.altitud)
+                        self.relojultima.actualizar_hora(self.hora_recibido)
+                        #self.tabla.ingresarBaseDatos(self.hora_recibido)
+                        self.checarMaxMin(self.tabla.temperatura[-1], self.tabla.presion[-1], self.tabla.altitud[-1])
+                        self.datospersecond.setLenNuevosDatos(len(self.tabla.presion))
+                        QtGui.QApplication.processEvents()
+                        if self.check_salir.isChecked():
+                            break
+                elif self.a[0] == 2:
+                    try:
+                        self.gps.ingresarDatos(self.a[1],self.a[2],self.a[3])
+                    except ValueError:
+                        continue
+                    if len(self.gps.latitud)>=1 and len(self.gps.longitud)>=1 and len(self.gps.altitud)>=1:
+                        if self.gps.altitud[-1] > 3000:
+                            self.gps.altitud = self.gps.altitud[:-1]
+                            self.gps.latitud = self.gps.latitud[:-1]
+                            self.gps.longitud = self.gps.longitud[:-1]
+                            continue
+                        self.hora_recibido = str(datetime.datetime.utcnow().time())
+                        self.gps.guardarEnArchivo(self.hora_recibido)
+                        self.relojultima.actualizar_hora(self.hora_recibido)
+                        QtGui.QApplication.processEvents()
+                        if self.check_salir.isChecked():
+                            break
+                elif self.a[0] == 3:
+                    try:
+                        self.dh11.ingresarDatos(self.a[1],self.a[2])
+                    except ValueError:
+                        continue
+                    if len(self.dh11.temperatura)>=1 and len(self.dh11.humedad)>=1:
+                        if self.dh11.temperatura[-1] > 100:
+                            self.dh11.temperatura = self.gps.altitud[:-1]
+                            self.dh11.humedad = self.dh11.humedad[:-1]
+                            continue
+                        self.hora_recibido = str(datetime.datetime.utcnow().time())
+                        self.dh11.guardarEnArchivo(self.hora_recibido)
+                        self.relojultima.actualizar_hora(self.hora_recibido)
+                        QtGui.QApplication.processEvents()
+                        if self.check_salir.isChecked():
+                            break
+                elif self.a[0] == 4:
+                    try:
+                        self.campoM.ingresarDatos(self.a[1])
+                    except ValueError:
+                        continue
+                    if len(self.campoM.valor)>=1:
+                        self.hora_recibido = str(datetime.datetime.utcnow().time())
+                        self.campoM.guardarEnArchivo(self.hora_recibido)
+                        self.relojultima.actualizar_hora(self.hora_recibido)
+                        QtGui.QApplication.processEvents()
+                        if self.check_salir.isChecked():
+                            break
+                else:
+                    continue
+            except ValueError:
                 continue
             
         self.ser.close()
