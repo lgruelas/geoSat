@@ -1,3 +1,32 @@
+/*
+#Copyright (C) 2015  Luis Germán Ruelas Luna gruelas@cieco.unam.mx
+
+#This file is part or GeoSat Viewer
+
+#GeoSat Viewer is free software; you can redistribute it and/or modify
+#it under the terms of the GNU General Public License as published by
+#the Free Software Foundation; either version 3 of the License, or
+#(at your option) any later version.
+
+#This program is distributed in the hope that it will be useful,
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
+#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#GNU General Public License for more details.
+
+#You should have received a copy of the GNU General Public License
+#along with this program; if not, write to the Free Software
+#Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+Tested in Arduino Uno and Arduino Nano
+
+Arduino code, requires the following sensors:
+BMP085 Vcc to 3.3v, SCL to A5, SDA to A4 and GND to ground
+DHT11 vcc to 5v, GND to ground and data to D8
+GPS Neo6 Vcc to 5v, GND to ground, RX to D4 and TX to D3
+Xbee pro S3B Vcc to 3.3v, GND to ground, RX to D10 and TX to D11
+A buzzer Vcc to 5v, connected to D9
+*/
+
 #include <TinyGPS.h>
 #include <SoftwareSerial.h>
 #include <DHT.h>
@@ -11,8 +40,8 @@
 
 
 Adafruit_BMP085 bmp;
-SoftwareSerial mySerial(3, 4); // RX, TX
-SoftwareSerial xbee(10,11); // RX, TX
+SoftwareSerial mySerial(3, 4);
+SoftwareSerial xbee(10,11);
 TinyGPS gps;
 
 void gpsdump(TinyGPS &gps);
@@ -91,30 +120,30 @@ void loop() {
     xbee.print(",");
     xbee.print(bmp.readAltitude());
     xbee.println("");
-  bool newdata = false;
-  unsigned long start = millis();
+    bool newdata = false;
+    unsigned long start = millis();
 
-  while (millis() - start < 250) {
-    if (mySerial.available()) {
-      char c = mySerial.read();
-      if (gps.encode(c)) {
-        newdata = true;
-      }
+    while (millis() - start < 250) {
+        if (mySerial.available()) {
+        char c = mySerial.read();
+        if (gps.encode(c)) {
+            newdata = true;
+        }
+        }
     }
-  }
-  
-  if (newdata) {
-    gpsdump(gps);
-  }
-  for (int i=0; i<MAX_COUNT; i++) {
-    tone_ = melody[i];
-    beat = beats[i];
     
-    duration = beat * tempo;
-    
-    playTone();
-    delayMicroseconds(pause);
-  }
+    if (newdata) {
+        gpsdump(gps);
+    }
+    for (int i=0; i<MAX_COUNT; i++) {
+        tone_ = melody[i];
+        beat = beats[i];
+        
+        duration = beat * tempo;
+        
+        playTone();
+        delayMicroseconds(pause);
+    }
     float h = dht.readHumidity();
     float t = dht.readTemperature();
   
