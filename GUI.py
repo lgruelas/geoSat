@@ -317,7 +317,7 @@ app = QtGui.QApplication(sys.argv)
 
 status = QtGui.QStatusBar()
 status.addWidget(QtGui.QLabel("Autor: Equipo GeoSat gruelas@cieco.unam.mx"),5)
-status.addWidget(QtGui.QLabel("Software Version 1.2 License GNU GPL v3"),5)
+status.addWidget(QtGui.QLabel("Software Version 1.3 License GNU GPL v3"),5)
 status.addWidget(QtGui.QLabel(u"Copyright © Germán Ruelas"),5)
 
 main = Ventana()
