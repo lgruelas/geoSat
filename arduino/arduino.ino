@@ -25,7 +25,7 @@ DHT11 vcc to 5v, GND to ground and data to D8
 GPS Neo6 Vcc to 5v, GND to ground, RX to D4 and TX to D3
 Xbee pro S3B Vcc to 3.3v, GND to ground, RX to D10 and TX to D11
 A buzzer Vcc to 5v, connected to D9
-and a magnetic camp sensor hmc1022 to 5v
+and a magnetic camp sensor hmc1022 to 5v and A0
 */
 
 #include <TinyGPS.h>
