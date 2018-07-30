@@ -2,6 +2,8 @@
 
 Source code of the GeoSat data visor, part of the GeaSat Team that participate in national cansats contest in México.
 
+![Alt text](files/sistema.png?raw=true "Title")
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
