@@ -69,6 +69,8 @@ This project is licensed under the GPL 3 License - see the [LICENSE.md](LICENSE.
 
 ## Project Status
 
-Starting
+Te project has ended, currently do not have maintenance.
 
 ## Acknowledgments
+
+To the IGUM for the facilities.
