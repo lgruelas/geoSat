@@ -12,19 +12,13 @@ Specific for fedora but is pretty easy to follow along in any distribution.
 
 ### Prerequisites
 
-*Linux
-
-*Python 2.7
-
-*PyQtGraph
-
-*PySerial
-
-*PySide
-
-*numpy
-
-*MariaDB
+* Linux
+* Python 2.7
+* PyQtGraph
+* PySerial
+* PySide
+* numpy
+* MariaDB
 
 
 Python and dependencies:
